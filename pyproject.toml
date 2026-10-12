@@ -9,5 +9,5 @@ dependencies = []
 Repository = "https://github.com/Rimor-dev/ComfyUI-Sigmaboy"
 
 [tool.comfy]
-PublisherId = "Rimor-dev"
+PublisherId = "rimor"
 DisplayName = "Sigmaboy"
