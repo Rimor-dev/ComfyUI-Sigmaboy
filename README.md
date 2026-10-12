@@ -1,4 +1,4 @@
-<img src="https://github.com/Rimor-dev/my-assets_/blob/main/2026-10-12_02-34-17.png" alt="main" width="40%">
+<img src="https://github.com/Rimor-dev/my-assets_/blob/main/2026-10-12_03-58-41.png" alt="main" width="60%">
 Slider 1.0 :
 <img src="https://github.com/Rimor-dev/my-assets_/blob/main/ComfyUI_temp_kkznx_00012_ (1).png" alt="main" width="20%">
 Slider 3.0 :
