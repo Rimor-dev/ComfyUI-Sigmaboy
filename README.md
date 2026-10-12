@@ -16,3 +16,10 @@ Slider 1.0 = base profile (recommended)
 Slider >1.0 = more aggressive
 
 Sampler: Euler Ancestral, simple, 8 steps, CFG 1.0
+
+## Tested on
+
+- **Qwen-Image 2.1 Turbo**
+- **Krea2 Turbo**
+- **Flux2 Klein**
+- **Z-Image Turbo**
