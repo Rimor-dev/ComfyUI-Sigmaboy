@@ -2,7 +2,7 @@
 
 # Sigmaboy
 
-**Sigma scheduler for Qwen-Image 2.1 Turbo (8 steps).**
+**Sigma scheduler for Qwen-Image 2.1 Turbo (Turbo LORA) (8 steps).**
 
 Sigmaboy fixes image artifacts, broken geometry, and mush caused by default schedulers.
 
