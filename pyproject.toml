@@ -1,0 +1,13 @@
+[project]
+name = "sigmaboy"
+description = "Sigma scheduler for Qwen-Image 2.1 Turbo, Krea2 Turbo, Flux2 Klein, Z-Image Turbo. One slider, three tuned profiles."
+version = "1.0.0"
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Rimor-dev/ComfyUI-Sigmaboy"
+
+[tool.comfy]
+PublisherId = "Rimor-dev"
+DisplayName = "Sigmaboy"
