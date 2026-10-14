@@ -42,7 +42,7 @@ function calculateNodeHeight() {
 // ============================================================
 // СЛАЙДЕР
 // ============================================================
-function createSlider(node, container, label, widgetName, defaultValue = 1.0, min = 1.0, max = 3.0, step = 0.01) {
+function createSlider(node, container, label, widgetName, defaultValue = 1.0, min = 1.0, max = 3.0, step = 0.01, onSave = null) {
     const row = document.createElement('div');
     row.style.cssText = `
         display: flex;
@@ -146,6 +146,7 @@ function createSlider(node, container, label, widgetName, defaultValue = 1.0, mi
     function setValue(value, fromUser = false) {
         currentValue = Math.max(min, Math.min(max, value));
         updateVisual(currentValue);
+
         const w = node.widgets?.find(x => x.name === widgetName);
         if (w) {
             w.value = currentValue;
@@ -153,6 +154,17 @@ function createSlider(node, container, label, widgetName, defaultValue = 1.0, mi
                 w._state.value = currentValue;
             }
         }
+
+        // ВАЖНО: обновляем widgets_values для ComfyUI
+        const widgetIndex = node.widgets?.findIndex(x => x.name === widgetName);
+        if (widgetIndex !== undefined && widgetIndex >= 0) {
+            if (!node.widgets_values) node.widgets_values = [];
+            node.widgets_values[widgetIndex] = currentValue;
+        }
+
+        // Сохранение через callback
+        if (onSave) onSave();
+
         if (fromUser && node.graph) {
             node.graph.change?.();
         }
@@ -184,6 +196,9 @@ function createSlider(node, container, label, widgetName, defaultValue = 1.0, mi
     track.addEventListener('dblclick', () => {
         setValue(1.0, true);
     });
+
+    // Инициализация
+    updateVisual(currentValue);
 
     return {
         getValue: () => currentValue,
@@ -256,42 +271,49 @@ app.registerExtension({
                 `;
                 this.addDOMWidget("sigmaboy_main", "main_container", container, { serialize: false });
 
-                // Слайдер
-                const aggressionValue = this.widgets?.find(w => w.name === "aggression")?.value ?? 1.0;
-                const slider = createSlider(
-                    this, container,
-                    "Aggression",
-                    "aggression",
-                    aggressionValue,
-                    1.0, 3.0, 0.01
-                );
+                // Объявляем slider заранее
+                let slider;
 
-                // Сохранение
+                // Определяем saveSettings СРАЗУ
                 let saveTimeout;
                 const saveSettings = () => {
                     clearTimeout(saveTimeout);
                     saveTimeout = setTimeout(() => {
                         this.properties = this.properties || {};
                         this.properties.sigmaboySettings = {
-                            aggression: slider.getValue(),
+                            aggression: slider?.getValue() ?? 1.0,
                         };
                         this.graph?.change?.();
                     }, 200);
                 };
 
-                const origSetValue = slider.setValue;
-                slider.setValue = (v) => {
-                    origSetValue(v);
-                    saveSettings();
-                };
+                // Слайдер с callback
+                const aggressionValue = this.widgets?.find(w => w.name === "aggression")?.value ?? 1.0;
+                slider = createSlider(
+                    this, container,
+                    "Aggression",
+                    "aggression",
+                    aggressionValue,
+                    1.0, 3.0, 0.01,
+                    saveSettings
+                );
 
-                // Восстановление
+                // Восстановление при загрузке
                 const origOnConfigure = this.onConfigure;
                 this.onConfigure = () => {
                     if (origOnConfigure) origOnConfigure.apply(this, arguments);
                     const s = this.properties?.sigmaboySettings;
                     if (s?.aggression !== undefined) {
                         slider.setValue(parseFloat(s.aggression));
+                    } else {
+                        // Fallback: читаем из widgets_values
+                        const widgetIndex = this.widgets?.findIndex(w => w.name === "aggression");
+                        if (widgetIndex !== undefined && widgetIndex >= 0 && this.widgets_values) {
+                            const val = parseFloat(this.widgets_values[widgetIndex]);
+                            if (!isNaN(val)) {
+                                slider.setValue(val);
+                            }
+                        }
                     }
                 };
 
